@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SenderAlice</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_alice">Hello Alice!</string>
+	<string name="btn_string">Select File</string>
+    <string name="chooser_label">Choose File</string>
+    <string name="selected_file"></string>
+    <string name="btn_send">Send File</string>
+     <string name="bobAddress">localhost:5000</string>
+     <string name="hntaddress">Bob Address</string>
+    
+    
+</resources>
