@@ -8,7 +8,7 @@
     <string name="chooser_label">Choose File</string>
     <string name="selected_file"></string>
     <string name="btn_send">Send File</string>
-     <string name="bobAddress">localhost:5000</string>
+     <string name="bobAddress">192.168.1.132:6000</string>
      <string name="hntaddress">Bob Address</string>
     
     
