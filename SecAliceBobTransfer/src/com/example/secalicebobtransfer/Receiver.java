@@ -27,7 +27,7 @@ public class Receiver extends Activity {
 		setContentView(R.layout.activity_receiver);
 try
 {
-	
+
 
 		InitServer("pwdbob", 6000);
 }
@@ -38,66 +38,66 @@ catch (Exception e) {
 
 
 	}
-	
-	
-	
+
+
+
 	 private void InitServer(String pass, int prt) throws Exception
 	    {
-	        
-	        
-	        
+
+
+
 	        String passphrase = pass;
 	        int port = prt;
-	        
+
 	        ServerSocket s=null;
-	        
+
 	        int bytesRead=0;        
 	        int read=0;
 	        long size=0;
-	        
+
 	        //System.out.println("USAGE: java Receiver port passphrase");
 
 	        try {
-	  
+
 	            System.setProperty("javax.net.ssl.trustStore","truststore.bks");
 	            System.setProperty("javax.net.ssl.trustStorePassword","catrust");
 	            // register a https protocol handler  - this may be required for previous JDK versions
 	            System.setProperty("java.protocol.handler.pkgs","com.sun.net.ssl.internal.www.protocol");
 
 	            //System.out.println("creating socket...");
-	            
+
 	        	setContentView(R.layout.activity_receiver);
 	        	TextView textView = (TextView) findViewById(R.id.text2);
 	        	textView.setText("Initializing Server");
 	        	textView.setText(textView.getText()+"\ncreating socket...at port "+prt);
-		          
+
 	        	AssetManager assetManager = getResources().getAssets();
-	        	
-	        	
+
+
 	              ServerSocketFactory ssf =
 			           Receiver.getServerSocketFactory(assetManager, passphrase);
 		      s = ssf.createServerSocket(port);
-		      
+
 		      ((SSLServerSocket)s).setNeedClientAuth(true);
 		      textView.setText(textView.getText()+"\n"+"waiting for connection...");
-	            
-		      
+
+
 	           // System.out.println("waiting for connection...");  
-		       
+
 		       String ipaddress= Receiver.GetLocalIpAddress();
-		       
+
 		       textView.setText(textView.getText()+"\n"+ "at"+ ipaddress + " : " + port);
-	            
-		       
-	            
+
+
+
 	            while(true) {  
 	                Socket clientSocket = null;  
 	                clientSocket = s.accept();  
-	                  
+
 	                InputStream in = clientSocket.getInputStream();  
-	                  
+
 	                DataInputStream clientData = new DataInputStream(in);   
-	                  
+
 	                String fileName = clientData.readUTF();     
 	                OutputStream output = new FileOutputStream(fileName);     
 	                size= clientData.readLong();     
@@ -107,21 +107,21 @@ catch (Exception e) {
 	                    output.write(buffer, 0, bytesRead);     
 	                    size -= bytesRead;     
 	                }  
-	                  
+
 	                // Closing the FileOutputStream handle  
 	                output.close();  
 	                textView.setText(textView.getText()+"Received File.. " + fileName + "  from Alice");
 	                break;
 	            }
-	        	  
-		      
-	          
-	        
+
+
+
+
 	        } catch (IOException e) {
 	                System.out.println("Server Error: " + e.getMessage());
 		          e.printStackTrace();
 	        }
-	               
+
 	        System.out.println("done...");
 	   }
 
@@ -129,37 +129,37 @@ catch (Exception e) {
 		    SSLServerSocketFactory ssf = null;
                  
 		    try {
-		    	
+
 		    		 String keyStoreType = "BKS";
 		    	   KeyStore keyStore = KeyStore.getInstance(keyStoreType);
 		    	   InputStream ims = asmgr.open("Bob.bks");
 			  	//keyStore.load(new FileInputStream("Bob.bks"), passwd.toCharArray()); 
 			  	keyStore.load(ims,passwd.toCharArray());
-			     
+
 			  	String keyalg=KeyManagerFactory.getDefaultAlgorithm();
 			      KeyManagerFactory kmf=KeyManagerFactory.getInstance(keyalg);
 			      kmf.init(keyStore, passwd.toCharArray());
-			      
-			      
-			  
+
+
+
 			      SSLContext context = SSLContext.getInstance("TLS");
-			     
+
 			      context.init(kmf.getKeyManagers(), null, null);
 			       ssf=context.getServerSocketFactory();
 		       return ssf;
 		    } catch (Exception e) {
 			e.printStackTrace();
 		    }
-		
+
 		   return null;
-		   
-		   
-		   
-		   
-		  
+
+
+
+
+
 	   }
 
-	
+
 	   private static String GetLocalIpAddress()
 	    {
 	        try {
@@ -178,5 +178,5 @@ catch (Exception e) {
 	        return "No IP Available";   
 	    }
 
-	
+
 }
