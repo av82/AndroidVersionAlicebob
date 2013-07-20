@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class Sender extends Activity {
@@ -112,6 +113,7 @@ public class Sender extends Activity {
 			TextView splitname=(TextView) findViewById(R.id.edtText);
 			String ipaddport[] = splitname.getText().toString().split(":");
 			
+			
 			try
 			{
 				
@@ -155,6 +157,7 @@ public class Sender extends Activity {
        String  host = hostIA.getHostName();
        File fs= new File(path);
        int port = Integer.parseInt(prt);
+       
 
 //       TextView splitname=(TextView) findViewById(R.id.edtText);
 //       splitname.setText(splitname.getText()+ "\n" + "testing");
@@ -229,10 +232,18 @@ System.out.println("Alice died: " + e.getMessage());
 
 
 	 private void setupSSLContext() throws GeneralSecurityException, IOException {
-	    TrustManagerFactory tmf = TrustManagerFactory.getInstance( "SunX509" );
-	    tmf.init( CAStore );
+//		 TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+//		 tmf.init( CAStore );
 
-	    KeyManagerFactory kmf = KeyManagerFactory.getInstance( "SunX509" );
+		 
+		 TrustManagerFactory tmf = 
+				    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+				tmf.init(CAStore);
+
+				KeyManagerFactory kmf = 
+				    KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+
+	   // KeyManagerFactory kmf = KeyManagerFactory.getInstance( "SunX509" );
 	    kmf.init(AliceKeyStore,"psalice".toCharArray());
 	    sslContext = SSLContext.getInstance( "TLS" );
 	    sslContext.init( kmf.getKeyManagers(),
@@ -242,6 +253,7 @@ System.out.println("Alice died: " + e.getMessage());
 	 
 	 private SSLSocket connect( String host, int port ) {
 		    try {
+		     
 		      setupTruststore();
 		      setupAliceKeyStore();
 		      setupSSLContext();
