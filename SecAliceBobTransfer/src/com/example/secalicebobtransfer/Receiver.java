@@ -1,5 +1,7 @@
 package com.example.secalicebobtransfer;
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import android.widget.TextView;
@@ -7,9 +9,11 @@ import android.widget.TextView;
 import java.io.*;
 import java.net.*;
 import java.security.KeyStore;
+import java.util.Enumeration;
+
 import javax.net.*;
 import javax.net.ssl.*;
-
+import android.content.res.AssetManager;
 
 
 public class Receiver extends Activity {
@@ -55,7 +59,7 @@ catch (Exception e) {
 
 	        try {
 	  
-	            System.setProperty("javax.net.ssl.trustStore","/dev/truststore.bks");
+	            System.setProperty("javax.net.ssl.trustStore","truststore.bks");
 	            System.setProperty("javax.net.ssl.trustStorePassword","catrust");
 	            // register a https protocol handler  - this may be required for previous JDK versions
 	            System.setProperty("java.protocol.handler.pkgs","com.sun.net.ssl.internal.www.protocol");
@@ -67,16 +71,24 @@ catch (Exception e) {
 	        	textView.setText("Initializing Server");
 	        	textView.setText(textView.getText()+"\ncreating socket...at port "+prt);
 		          
+	        	AssetManager assetManager = getResources().getAssets();
+	        	
+	        	
 	              ServerSocketFactory ssf =
-			           Receiver.getServerSocketFactory(passphrase);
+			           Receiver.getServerSocketFactory(assetManager, passphrase);
 		      s = ssf.createServerSocket(port);
 		      
 		      ((SSLServerSocket)s).setNeedClientAuth(true);
 		      textView.setText(textView.getText()+"\n"+"waiting for connection...");
 	            
-		       ((SSLServerSocket)s).setNeedClientAuth(true);
+		      
 	           // System.out.println("waiting for connection...");  
+		       
+		       String ipaddress= Receiver.GetLocalIpAddress();
+		       
+		       textView.setText(textView.getText()+"\n"+ "at"+ ipaddress + " : " + port);
 	            
+		       
 	            
 	            while(true) {  
 	                Socket clientSocket = null;  
@@ -113,15 +125,18 @@ catch (Exception e) {
 	        System.out.println("done...");
 	   }
 
-	   private static ServerSocketFactory getServerSocketFactory(String passwd) {
+	   private static ServerSocketFactory getServerSocketFactory(AssetManager asmgr, String passwd) {
 		    SSLServerSocketFactory ssf = null;
-
+                 
 		    try {
-		    	 String keyStoreType = "BKS";
-			      KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-			  	keyStore.load(new FileInputStream("/dev/Bob.bks"), passwd.toCharArray()); 
-			  	
-			      String keyalg=KeyManagerFactory.getDefaultAlgorithm();
+		    	
+		    		 String keyStoreType = "BKS";
+		    	   KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+		    	   InputStream ims = asmgr.open("Bob.bks");
+			  	//keyStore.load(new FileInputStream("Bob.bks"), passwd.toCharArray()); 
+			  	keyStore.load(ims,passwd.toCharArray());
+			     
+			  	String keyalg=KeyManagerFactory.getDefaultAlgorithm();
 			      KeyManagerFactory kmf=KeyManagerFactory.getInstance(keyalg);
 			      kmf.init(keyStore, passwd.toCharArray());
 			      
@@ -145,6 +160,23 @@ catch (Exception e) {
 	   }
 
 	
-	
+	   private static String GetLocalIpAddress()
+	    {
+	        try {
+	            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+	                NetworkInterface intf = en.nextElement();
+	                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+	                    InetAddress inetAddress = enumIpAddr.nextElement();
+	                    if (!inetAddress.isLoopbackAddress() && (inetAddress instanceof Inet4Address)){
+	                        return inetAddress.getHostAddress().toString();
+	                    }
+	                }
+	            }
+	        } catch (SocketException ex) {
+	            return "ERROR Obtaining IP";
+	        }
+	        return "No IP Available";   
+	    }
+
 	
 }
